@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
 
 class MainScreen extends StatefulWidget {
@@ -12,9 +13,9 @@ class _MainScreenState extends State<MainScreen> {
   final selectedDate = DateTime.now();
 
   List<String> menu = [
-    '쌀밥 , 북어국 , 고등어김치조림 , 명엽채조림 , 도시락김 , 배추김치',
-    '쌀밥 , 아욱된장국 , 미트볼케찹조림 , 쌈다시마/초장 , 오이무침 , 배추김치',
-    '쌀밥 , 소고기미역국 , 비엔나야채볶음 , 메추리알장조림 , 깻잎지 , 배추김치',
+      '쌀밥 , 북어국 , 고등어김치조림 , 명엽채조림 , 도시락김 , 배추김치',
+      '쌀밥 , 아욱된장국 , 미트볼케찹조림 , 쌈다시마/초장 , 오이무침 , 배추김치',
+      '쌀밥 , 소고기미역국 , 비엔나야채볶음 , 메추리알장조림 , 깻잎지 , 배추김치',
   ];
 
   @override
@@ -43,7 +44,13 @@ class _MainScreenState extends State<MainScreen> {
           ),
           Column(
             children: menu
-                .map((x) => MenuBox(menu: x,)).toList(),
+            .asMap()
+            .entries
+                .map((x) => _MenuBox(
+                      mealTimeIndex : x.key,
+                      menu: x.value,
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -95,10 +102,12 @@ class _DateBar extends StatelessWidget {
   }
 }
 
-class MenuBox extends StatelessWidget {
+class _MenuBox extends StatelessWidget {
+  final int mealTimeIndex;
   final String menu;
 
-  const MenuBox({
+  const _MenuBox({
+    required this.mealTimeIndex,
     required this.menu,
     super.key,
   });
@@ -118,13 +127,39 @@ class MenuBox extends StatelessWidget {
           alignment: Alignment.center,
           child: Padding(
             padding: const EdgeInsets.all(25.0),
-            child: Text(
-              menu,
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.03,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    // color: Colors.white,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        MEAL_TIME[mealTimeIndex],
+                        style: TextStyle(
+                          color: Color(0xffFF8400),
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  menu,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
