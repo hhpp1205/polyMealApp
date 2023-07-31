@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
+import 'package:http/http.dart' as http;
+import 'package:poly_meal/menu.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -11,11 +15,27 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final selectedDate = DateTime.now();
+  var apiResult;
+  Menu me = Menu("test", "test", "test", List.empty());
+
+  @override
+  void initState()  {
+    setApiResult();
+  }
+
+  Future<void> setApiResult() async {
+    final url = Uri.parse("http://localhost:8080/api/v1/menus?date=2023-07-31&schoolCode=002");
+    var result = await http.get(url);
+    setState(() {
+      apiResult = result;
+      me = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
+    });
+  }
 
   List<String> menu = [
-      '쌀밥 , 북어국 , 고등어김치조림 , 명엽채조림 , 도시락김 , 배추김치',
-      '쌀밥 , 아욱된장국 , 미트볼케찹조림 , 쌈다시마/초장 , 오이무침 , 배추김치',
-      '쌀밥 , 소고기미역국 , 비엔나야채볶음 , 메추리알장조림 , 깻잎지 , 배추김치',
+    '쌀밥 , 북어국 , 고등어김치조림 , 명엽채조림 , 도시락김 , 배추김치',
+    '쌀밥 , 아욱된장국 , 미트볼케찹조림 , 쌈다시마/초장 , 오이무침 , 배추김치',
+    '쌀밥 , 소고기미역국 , 비엔나야채볶음 , 메추리알장조림 , 깻잎지 , 배추김치',
   ];
 
   @override
@@ -44,13 +64,21 @@ class _MainScreenState extends State<MainScreen> {
           ),
           Column(
             children: menu
-            .asMap()
-            .entries
+                .asMap()
+                .entries
                 .map((x) => _MenuBox(
-                      mealTimeIndex : x.key,
+                      mealTimeIndex: x.key,
                       menu: x.value,
                     ))
                 .toList(),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              print("decode = ${utf8.decode(apiResult.bodyBytes)}");
+              print("me = ${me}");
+              print("me = ${me.meal.length}");
+            },
+            child: Text('button'),
           ),
         ],
       ),
@@ -144,9 +172,8 @@ class _MenuBox extends StatelessWidget {
                       child: Text(
                         MEAL_TIME[mealTimeIndex],
                         style: TextStyle(
-                          color: Color(0xffFF8400),
-                          fontWeight: FontWeight.w700
-                        ),
+                            color: Color(0xffFF8400),
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
