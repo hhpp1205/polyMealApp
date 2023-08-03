@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
 import 'package:http/http.dart' as http;
@@ -14,9 +15,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final selectedDate = DateTime.now();
+  static DateTime selectedDate = DateTime.now();
+
+
+  final schoolCode = "002";
+
+  late Map<String, dynamic> queryParams = {
+    'schoolCode' : schoolCode,
+    'date' : DateFormat('yyyy-MM-dd').format(selectedDate)
+  };
+
+
+
   var apiResult;
-  Menu me = Menu("test", "test", "test", List.empty());
+  Menu menu = Menu("test", "test", "test", List.empty());
 
   @override
   void initState()  {
@@ -24,19 +36,14 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> setApiResult() async {
-    final url = Uri.parse("http://localhost:8080/api/v1/menus?date=2023-07-31&schoolCode=002");
+    final url = Uri.parse("http://localhost:8080/api/v1/menus").replace(queryParameters: queryParams);
+        // .replace(queryParameters: queryParams);
     var result = await http.get(url);
     setState(() {
       apiResult = result;
-      me = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
+      menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
     });
   }
-
-  List<String> menu = [
-    '쌀밥 , 북어국 , 고등어김치조림 , 명엽채조림 , 도시락김 , 배추김치',
-    '쌀밥 , 아욱된장국 , 미트볼케찹조림 , 쌈다시마/초장 , 오이무침 , 배추김치',
-    '쌀밥 , 소고기미역국 , 비엔나야채볶음 , 메추리알장조림 , 깻잎지 , 배추김치',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
             selectedDate: selectedDate,
           ),
           Column(
-            children: menu
+            children: menu.meal
                 .asMap()
                 .entries
                 .map((x) => _MenuBox(
@@ -75,8 +82,8 @@ class _MainScreenState extends State<MainScreen> {
           ElevatedButton(
             onPressed: () async {
               print("decode = ${utf8.decode(apiResult.bodyBytes)}");
-              print("me = ${me}");
-              print("me = ${me.meal.length}");
+              print("menu = ${menu}");
+              print(queryParams);
             },
             child: Text('button'),
           ),
@@ -179,7 +186,7 @@ class _MenuBox extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  menu,
+                  menu.isNotEmpty ?? false ? menu! : "등록된 메뉴가 없습니다.",
                   style: TextStyle(
                     fontSize: 18.0,
                     color: Colors.white,
