@@ -17,7 +17,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   DateTime? selectedDate;
 
-  final schoolCode = "005";
+  final schoolCode = "006";
 
   late Map<String, dynamic> queryParams = {
     'schoolCode': schoolCode,
