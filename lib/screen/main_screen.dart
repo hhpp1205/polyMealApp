@@ -39,7 +39,11 @@ class _MainScreenState extends State<MainScreen> {
     var result = await http.get(url);
     setState(() {
       apiResult = result;
-      menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
+      try {
+        menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
+      } catch (e) {
+        menu.meal = List.of(["", "", ""]);
+      }
     });
   }
 
@@ -68,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
             selectedDate: selectedDate!,
             onPressedBackDateButton: onPressedBackDateButton,
             onPressedForwardButton: onPressedForwardButton,
+            onPressedTodayButton: onPressedTodayButton,
           ),
           Column(
             children: menu.meal
@@ -94,22 +99,31 @@ class _MainScreenState extends State<MainScreen> {
 
   makeQueryParams() {
     Map<String, dynamic> queryParams = {
-        'schoolCode': schoolCode,
-        'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
+      'schoolCode': schoolCode,
+      'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
     };
     return queryParams;
   }
 
   void onPressedBackDateButton() {
     setState(() {
-      selectedDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
+      selectedDate = DateTime(
+          selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
     });
     setApiResult();
   }
 
   void onPressedForwardButton() {
     setState(() {
-      selectedDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+      selectedDate = DateTime(
+          selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+    });
+    setApiResult();
+  }
+
+  void onPressedTodayButton() {
+    setState(() {
+      selectedDate = DateTime.now();
     });
     setApiResult();
   }
@@ -122,13 +136,15 @@ class _DateBar extends StatelessWidget {
   late int day;
   late int weekday;
 
-  final  VoidCallback onPressedBackDateButton;
+  final VoidCallback onPressedBackDateButton;
   final VoidCallback onPressedForwardButton;
+  final VoidCallback onPressedTodayButton;
 
   _DateBar({
     required this.selectedDate,
     required this.onPressedBackDateButton,
     required this.onPressedForwardButton,
+    required this.onPressedTodayButton,
     super.key,
   }) {
     year = selectedDate.year;
@@ -160,12 +176,42 @@ class _DateBar extends StatelessWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.center,
-                child: Text(
-                  '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    SizedBox(
+                      width: 80.0,
+                      child: OutlinedButton(
+                        onPressed: onPressedTodayButton,
+                        child: Text(
+                          "Today",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 2.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
