@@ -15,29 +15,27 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  static DateTime selectedDate = DateTime.now();
+  DateTime? selectedDate;
 
-
-  final schoolCode = "002";
+  final schoolCode = "005";
 
   late Map<String, dynamic> queryParams = {
-    'schoolCode' : schoolCode,
-    'date' : DateFormat('yyyy-MM-dd').format(selectedDate)
+    'schoolCode': schoolCode,
+    'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
   };
 
-
-
   var apiResult;
-  Menu menu = Menu("test", "test", "test", List.empty());
+  Menu menu = Menu("test", "test", "test", List.of(["", "", ""]));
 
   @override
-  void initState()  {
+  void initState() {
+    selectedDate = DateTime.now();
     setApiResult();
   }
 
   Future<void> setApiResult() async {
-    final url = Uri.parse("http://localhost:8080/api/v1/menus").replace(queryParameters: queryParams);
-        // .replace(queryParameters: queryParams);
+    final url = Uri.parse("http://localhost:8080/api/v1/menus")
+        .replace(queryParameters: makeQueryParams());
     var result = await http.get(url);
     setState(() {
       apiResult = result;
@@ -53,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
-            "폴급식",
+            menu.schoolName,
           ),
         ),
         leading: IconButton(
@@ -67,7 +65,9 @@ class _MainScreenState extends State<MainScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _DateBar(
-            selectedDate: selectedDate,
+            selectedDate: selectedDate!,
+            onPressedBackDateButton: onPressedBackDateButton,
+            onPressedForwardButton: onPressedForwardButton,
           ),
           Column(
             children: menu.meal
@@ -91,6 +91,28 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
+  makeQueryParams() {
+    Map<String, dynamic> queryParams = {
+        'schoolCode': schoolCode,
+        'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
+    };
+    return queryParams;
+  }
+
+  void onPressedBackDateButton() {
+    setState(() {
+      selectedDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
+    });
+    setApiResult();
+  }
+
+  void onPressedForwardButton() {
+    setState(() {
+      selectedDate = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+    });
+    setApiResult();
+  }
 }
 
 class _DateBar extends StatelessWidget {
@@ -100,8 +122,13 @@ class _DateBar extends StatelessWidget {
   late int day;
   late int weekday;
 
+  final  VoidCallback onPressedBackDateButton;
+  final VoidCallback onPressedForwardButton;
+
   _DateBar({
     required this.selectedDate,
+    required this.onPressedBackDateButton,
+    required this.onPressedForwardButton,
     super.key,
   }) {
     year = selectedDate.year;
@@ -122,15 +149,33 @@ class _DateBar extends StatelessWidget {
           color: Color(0xffFF8400),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
-            style: TextStyle(
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: onPressedBackDateButton,
+              iconSize: 25.0,
               color: Colors.white,
-              fontWeight: FontWeight.w700,
+              icon: Icon(Icons.arrow_back_ios),
             ),
-          ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: onPressedForwardButton,
+              iconSize: 25.0,
+              color: Colors.white,
+              icon: Icon(Icons.arrow_forward_ios),
+            ),
+          ],
         ),
       ),
     );
