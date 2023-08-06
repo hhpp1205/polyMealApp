@@ -39,6 +39,8 @@ dependencies:
   http: ^1.1.0
 #  날짜 포멧팅
   intl: ^0.17.0
+#  데이터 저장
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:
