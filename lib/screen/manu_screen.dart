@@ -2,19 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:poly_meal/const/color.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:poly_meal/menu.dart';
+import 'package:poly_meal/screen/select_school_screen.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class ManuScreen extends StatefulWidget {
+  const ManuScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<ManuScreen> createState() => _ManuScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _ManuScreenState extends State<ManuScreen> {
   DateTime? selectedDate;
 
   final schoolCode = "006";
@@ -50,21 +52,18 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: COLOR_IVORY,
       appBar: AppBar(
-        backgroundColor: Color(0xffFF8400),
+        backgroundColor: COLOR_NAVY,
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
             menu.schoolName,
-          ),
-        ),
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.menu,
+            style: TextStyle(color: COLOR_IVORY, fontWeight: FontWeight.w700),
           ),
         ),
       ),
+      drawer: _Drawer(schoolName : menu.schoolName),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -129,6 +128,50 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+class _Drawer extends StatelessWidget {
+  final String schoolName;
+
+  const _Drawer({required this.schoolName, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: Text(
+              schoolName,
+              style: TextStyle(
+                color: COLOR_IVORY,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            accountEmail: Text(''),
+            decoration: BoxDecoration(
+              color: COLOR_NAVY,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10.0),
+                bottomRight: Radius.circular(10.0),
+              ),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.school,),
+            iconColor: COLOR_NAVY,
+            title: Text(
+                "학교 변경",
+              style: TextStyle(
+                color: COLOR_NAVY,
+                fontWeight: FontWeight.w700
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class _DateBar extends StatelessWidget {
   final DateTime selectedDate;
   late int year;
@@ -162,7 +205,7 @@ class _DateBar extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.05,
         decoration: BoxDecoration(
-          color: Color(0xffFF8400),
+          color: COLOR_NAVY,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -182,7 +225,7 @@ class _DateBar extends StatelessWidget {
                     Text(
                       '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: COLOR_IVORY,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -200,9 +243,9 @@ class _DateBar extends StatelessWidget {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
+                          foregroundColor: COLOR_IVORY,
                           side: BorderSide(
-                            color: Colors.white,
+                            color: COLOR_IVORY,
                             width: 2.5,
                           ),
                           shape: RoundedRectangleBorder(
@@ -218,7 +261,7 @@ class _DateBar extends StatelessWidget {
             IconButton(
               onPressed: onPressedForwardButton,
               iconSize: 25.0,
-              color: Colors.white,
+              color: COLOR_IVORY,
               icon: Icon(Icons.arrow_forward_ios),
             ),
           ],
@@ -246,7 +289,7 @@ class _MenuBox extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.20,
         decoration: BoxDecoration(
-          color: Color(0xffFF8400),
+          color: COLOR_NAVY,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Align(
@@ -261,17 +304,15 @@ class _MenuBox extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.03,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: COLOR_IVORY,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    // color: Colors.white,
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
                         MEAL_TIME[mealTimeIndex],
                         style: TextStyle(
-                            color: Color(0xffFF8400),
-                            fontWeight: FontWeight.w700),
+                            color: COLOR_NAVY, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
@@ -280,7 +321,7 @@ class _MenuBox extends StatelessWidget {
                   menu.isNotEmpty ?? false ? menu! : "등록된 메뉴가 없습니다.",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Colors.white,
+                    color: COLOR_IVORY,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

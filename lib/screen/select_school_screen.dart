@@ -5,8 +5,20 @@ class SelectSchoolScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("selectSchool"),
+    return Stack(
+      children: [
+        Center(
+            child: Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.red,
+              ),
+            )
+        ),
+      ],
     );
   }
 }

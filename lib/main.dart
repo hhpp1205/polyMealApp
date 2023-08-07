@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poly_meal/screen/main_screen.dart';
+import 'package:poly_meal/screen/manu_screen.dart';
 import 'package:poly_meal/screen/select_school_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +16,7 @@ const Map<int, String> WEEKDAY_MAP = {
 void main() {
   return runApp(
       MaterialApp(
-        home: MainScreen(),
+        home: ManuScreen(),
     ),
   );
 }
