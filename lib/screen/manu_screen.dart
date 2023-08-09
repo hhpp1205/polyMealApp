@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poly_meal/const/color.dart';
+import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
@@ -175,10 +175,7 @@ class _Drawer extends StatelessWidget {
           UserAccountsDrawerHeader(
             accountName: Text(
               schoolName,
-              style: TextStyle(
-                color: COLOR_IVORY,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TEXT_STYLE,
             ),
             accountEmail: Text(''),
             decoration: BoxDecoration(
@@ -206,6 +203,7 @@ class _Drawer extends StatelessWidget {
                             schoolCodeMap: schoolCodeMap,
                           )));
               setSchoolCode(schoolCode);
+              print(schoolCode);
             },
           )
         ],
@@ -266,10 +264,7 @@ class _DateBar extends StatelessWidget {
                   children: [
                     Text(
                       '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
-                      style: TextStyle(
-                        color: COLOR_IVORY,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: TEXT_STYLE,
                     ),
                     SizedBox(
                       width: 10.0,
@@ -280,9 +275,7 @@ class _DateBar extends StatelessWidget {
                         onPressed: onPressedTodayButton,
                         child: Text(
                           "Today",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: TEXT_STYLE,
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: COLOR_IVORY,
@@ -353,19 +346,14 @@ class _MenuBox extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         MEAL_TIME[mealTimeIndex],
-                        style: TextStyle(
-                            color: COLOR_NAVY, fontWeight: FontWeight.w700),
+                        style: TEXT_STYLE.copyWith(color: COLOR_NAVY),
                       ),
                     ),
                   ),
                 ),
                 Text(
                   menu.isNotEmpty ?? false ? menu! : "등록된 메뉴가 없습니다.",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: COLOR_IVORY,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TEXT_STYLE.copyWith(fontSize: 18.0),
                 ),
               ],
             ),
