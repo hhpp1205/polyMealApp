@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:poly_meal/const/color.dart';
+import 'package:poly_meal/const/host.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/main.dart';
 import 'package:http/http.dart' as http;
@@ -18,35 +19,58 @@ class ManuScreen extends StatefulWidget {
 
 class _ManuScreenState extends State<ManuScreen> {
   DateTime? selectedDate;
-
-  final schoolCode = "006";
+  Map<String, String>? schoolCodeMap = {"001": "대전폴리텍", "002": "서울정수폴리택"};
+  String schoolCode = "006";
 
   late Map<String, dynamic> queryParams = {
     'schoolCode': schoolCode,
     'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
   };
 
-  var apiResult;
   Menu menu = Menu("test", "test", "test", List.of(["", "", ""]));
 
   @override
   void initState() {
     selectedDate = DateTime.now();
-    setApiResult();
+    getMenuApi();
+    getSchoolApi();
   }
 
-  Future<void> setApiResult() async {
-    final url = Uri.parse("http://localhost:8080/api/v1/menus")
+  Future<void> getMenuApi() async {
+    final url = Uri.parse("${HOST}/api/v1/menus")
         .replace(queryParameters: makeQueryParams());
     var result = await http.get(url);
     setState(() {
-      apiResult = result;
       try {
         menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
       } catch (e) {
         menu.meal = List.of(["", "", ""]);
       }
     });
+  }
+
+  Future<void> getSchoolApi() async {
+    final url = Uri.parse("${HOST}/api/v1/schools");
+    var result = await http.get(url);
+
+    final dynamic decodedData = jsonDecode(utf8.decode(result.bodyBytes));
+
+    final Map<String, String> schoolCodeMap = {};
+    decodedData.forEach((key, value) {
+      schoolCodeMap[key] = value.toString();
+    });
+
+    setState(() {
+      this.schoolCodeMap = schoolCodeMap;
+    });
+  }
+
+  void setSchoolCode(String schoolCode) {
+    setState(() {
+      this.schoolCode = schoolCode;
+    });
+
+    getMenuApi();
   }
 
   @override
@@ -63,7 +87,11 @@ class _ManuScreenState extends State<ManuScreen> {
           ),
         ),
       ),
-      drawer: _Drawer(schoolName : menu.schoolName),
+      drawer: _Drawer(
+        schoolName: menu.schoolName,
+        schoolCodeMap: schoolCodeMap!,
+        setSchoolCode: setSchoolCode,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -85,9 +113,9 @@ class _ManuScreenState extends State<ManuScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              print("decode = ${utf8.decode(apiResult.bodyBytes)}");
               print("menu = ${menu}");
               print(queryParams);
+              print(schoolCodeMap);
             },
             child: Text('button'),
           ),
@@ -109,7 +137,7 @@ class _ManuScreenState extends State<ManuScreen> {
       selectedDate = DateTime(
           selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
     });
-    setApiResult();
+    getMenuApi();
   }
 
   void onPressedForwardButton() {
@@ -117,21 +145,27 @@ class _ManuScreenState extends State<ManuScreen> {
       selectedDate = DateTime(
           selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
     });
-    setApiResult();
+    getMenuApi();
   }
 
   void onPressedTodayButton() {
     setState(() {
       selectedDate = DateTime.now();
     });
-    setApiResult();
+    getMenuApi();
   }
 }
 
 class _Drawer extends StatelessWidget {
   final String schoolName;
+  final Map<String, String> schoolCodeMap;
+  final setSchoolCode;
 
-  const _Drawer({required this.schoolName, super.key});
+  const _Drawer(
+      {required this.schoolName,
+      required this.schoolCodeMap,
+      required this.setSchoolCode,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -156,15 +190,22 @@ class _Drawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.school,),
+            leading: Icon(
+              Icons.school,
+            ),
             iconColor: COLOR_NAVY,
             title: Text(
-                "학교 변경",
-              style: TextStyle(
-                color: COLOR_NAVY,
-                fontWeight: FontWeight.w700
-              ),
+              "학교 변경",
+              style: TextStyle(color: COLOR_NAVY, fontWeight: FontWeight.w700),
             ),
+            onTap: () async {
+              final schoolCode =
+                  await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => SelectSchoolScreen(
+                            schoolCodeMap: schoolCodeMap,
+                          )));
+              setSchoolCode(schoolCode);
+            },
           )
         ],
       ),
