@@ -1,7 +1,8 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:poly_meal/screen/manu_screen.dart';
-import 'package:poly_meal/screen/select_school_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 const Map<int, String> WEEKDAY_MAP = {
 1: '월',

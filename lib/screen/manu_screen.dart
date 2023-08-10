@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:poly_meal/const/style.dart';
@@ -9,6 +8,7 @@ import 'package:poly_meal/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:poly_meal/menu.dart';
 import 'package:poly_meal/screen/select_school_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManuScreen extends StatefulWidget {
   const ManuScreen({super.key});
@@ -20,20 +20,21 @@ class ManuScreen extends StatefulWidget {
 class _ManuScreenState extends State<ManuScreen> {
   DateTime? selectedDate;
   Map<String, String>? schoolCodeMap = {"001": "대전폴리텍", "002": "서울정수폴리택"};
-  String schoolCode = "006";
+  String? schoolCode;
 
   late Map<String, dynamic> queryParams = {
     'schoolCode': schoolCode,
     'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
   };
 
-  Menu menu = Menu("test", "test", "test", List.of(["", "", ""]));
+  Menu menu = Menu("학교를 선택해 주세요", "", List.of(["", "", ""]));
 
   @override
   void initState() {
     selectedDate = DateTime.now();
     getMenuApi();
-    getSchoolApi();
+    getSchoolListApi();
+    isSchoolCodeNavigator();
   }
 
   Future<void> getMenuApi() async {
@@ -49,7 +50,7 @@ class _ManuScreenState extends State<ManuScreen> {
     });
   }
 
-  Future<void> getSchoolApi() async {
+  Future<void> getSchoolListApi() async {
     final url = Uri.parse("${HOST}/api/v1/schools");
     var result = await http.get(url);
 
@@ -65,7 +66,35 @@ class _ManuScreenState extends State<ManuScreen> {
     });
   }
 
-  void setSchoolCode(String schoolCode) {
+  isSchoolCodeNavigator() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    if(pref.getString("schoolCode") != null) {
+      setState(() {
+        schoolCode = pref.getString("schoolCode").toString();
+      });
+    } else {
+      final schoolCode = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => SelectSchoolScreen(schoolCodeMap: schoolCodeMap!))
+      );
+
+      setSchoolCode(schoolCode);
+    }
+  }
+
+  makeQueryParams() {
+    Map<String, dynamic> queryParams = {
+      'schoolCode': schoolCode,
+      'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
+    };
+    return queryParams;
+  }
+
+  void setSchoolCode(String schoolCode) async {
+    print("call setSchoolCode");
+
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("schoolCode", schoolCode);
+
     setState(() {
       this.schoolCode = schoolCode;
     });
@@ -115,7 +144,17 @@ class _ManuScreenState extends State<ManuScreen> {
             onPressed: () async {
               print("menu = ${menu}");
               print(queryParams);
-              print(schoolCodeMap);
+              // print(schoolCodeMap);
+
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              print(pref.getString("schoolCode"));
+            },
+            child: Text('button'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              pref.remove("schoolCode");
             },
             child: Text('button'),
           ),
@@ -124,37 +163,6 @@ class _ManuScreenState extends State<ManuScreen> {
     );
   }
 
-  makeQueryParams() {
-    Map<String, dynamic> queryParams = {
-      'schoolCode': schoolCode,
-      'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
-    };
-    return queryParams;
-  }
-
-  void onPressedBackDateButton() {
-    setState(() {
-      selectedDate = DateTime(
-          selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
-    });
-    getMenuApi();
-  }
-
-  void onPressedForwardButton() {
-    setState(() {
-      selectedDate = DateTime(
-          selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
-    });
-    getMenuApi();
-  }
-
-  void onPressedTodayButton() {
-    setState(() {
-      selectedDate = DateTime.now();
-    });
-    getMenuApi();
-  }
-}
 
 class _Drawer extends StatelessWidget {
   final String schoolName;
@@ -198,7 +206,8 @@ class _Drawer extends StatelessWidget {
             onTap: () async {
               //Drawer 메뉴 닫기
               Navigator.pop(context);
-              final schoolCode = await Navigator.of(context).push(MaterialPageRoute(
+              final schoolCode =
+                  await Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => SelectSchoolScreen(
                             schoolCodeMap: schoolCodeMap,
                           )));
@@ -303,6 +312,30 @@ class _DateBar extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+  void onPressedBackDateButton() {
+  setState(() {
+  selectedDate = DateTime(
+  selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
+  });
+  getMenuApi();
+  }
+
+  void onPressedForwardButton() {
+  setState(() {
+  selectedDate = DateTime(
+  selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+  });
+  getMenuApi();
+  }
+
+  void onPressedTodayButton() {
+  setState(() {
+  selectedDate = DateTime.now();
+  });
+  getMenuApi();
   }
 }
 

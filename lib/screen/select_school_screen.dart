@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poly_meal/const/style.dart';
 
 class SelectSchoolScreen extends StatelessWidget {
   // Key = 학교 코드 ex) 003
@@ -11,19 +12,35 @@ class SelectSchoolScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          children: schoolCodeMap.entries
-              .map((entry) => TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(entry.key);
-                    },
-                    child: Text("${entry.value}"),
-                  ))
-              .toList(),
+    return Scaffold(
+      backgroundColor: COLOR_IVORY,
+      appBar: AppBar(
+        backgroundColor: COLOR_NAVY,
+        title: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            "학교를 선택해 주세요",
+            style: TextStyle(color: COLOR_IVORY, fontWeight: FontWeight.w700),
+          ),
         ),
       ),
+     body: SingleChildScrollView(
+       child: Center(
+         child: Column(
+           children: schoolCodeMap.entries
+               .map((entry) => TextButton(
+             onPressed: () {
+               Navigator.of(context).pop(entry.key);
+             },
+             child: Text(
+               "${entry.value}",
+               style: TEXT_STYLE.copyWith(color: COLOR_NAVY),
+             ),
+           ))
+               .toList(),
+         ),
+       ),
+     ),
     );
   }
 }
