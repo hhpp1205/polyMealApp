@@ -121,48 +121,81 @@ class _ManuScreenState extends State<ManuScreen> {
         schoolCodeMap: schoolCodeMap!,
         setSchoolCode: setSchoolCode,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _DateBar(
-            selectedDate: selectedDate!,
-            onPressedBackDateButton: onPressedBackDateButton,
-            onPressedForwardButton: onPressedForwardButton,
-            onPressedTodayButton: onPressedTodayButton,
-          ),
-          Column(
-            children: menu.meal
-                .asMap()
-                .entries
-                .map((x) => _MenuBox(
-                      mealTimeIndex: x.key,
-                      menu: x.value,
-                    ))
-                .toList(),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              print("menu = ${menu}");
-              print(queryParams);
-              // print(schoolCodeMap);
+      body: GestureDetector(
+        // 위에서 아래로 드래그 시 오늘 날짜로 업데이트
+        onVerticalDragUpdate: (details) {
+          if (details.delta.dy > 110) {
+            onPressedTodayButton();
+            print("call VerticalDragUpdate");
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _DateBar(
+              selectedDate: selectedDate!,
+              onPressedBackDateButton: onPressedBackDateButton,
+              onPressedForwardButton: onPressedForwardButton,
+              onPressedTodayButton: onPressedTodayButton,
+            ),
+            Column(
+              children: menu.meal
+                  .asMap()
+                  .entries
+                  .map((x) => _MenuBox(
+                        mealTimeIndex: x.key,
+                        menu: x.value,
+                      ))
+                  .toList(),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                print("menu = ${menu}");
+                print(queryParams);
+                // print(schoolCodeMap);
 
-              SharedPreferences pref = await SharedPreferences.getInstance();
-              print(pref.getString("schoolCode"));
-            },
-            child: Text('button'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              SharedPreferences pref = await SharedPreferences.getInstance();
-              pref.remove("schoolCode");
-            },
-            child: Text('button'),
-          ),
-        ],
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                print(pref.getString("schoolCode"));
+              },
+              child: Text('button'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                pref.remove("schoolCode");
+              },
+              child: Text('button'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
+
+  void onPressedBackDateButton() {
+    setState(() {
+      selectedDate = DateTime(
+          selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
+    });
+    getMenuApi();
+  }
+
+  void onPressedForwardButton() {
+    setState(() {
+      selectedDate = DateTime(
+          selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+    });
+    getMenuApi();
+  }
+
+  void onPressedTodayButton() {
+    setState(() {
+      selectedDate = DateTime.now();
+    });
+    getMenuApi();
+  }
+}
 
 class _Drawer extends StatelessWidget {
   final String schoolName;
@@ -312,30 +345,6 @@ class _DateBar extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-  void onPressedBackDateButton() {
-  setState(() {
-  selectedDate = DateTime(
-  selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
-  });
-  getMenuApi();
-  }
-
-  void onPressedForwardButton() {
-  setState(() {
-  selectedDate = DateTime(
-  selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
-  });
-  getMenuApi();
-  }
-
-  void onPressedTodayButton() {
-  setState(() {
-  selectedDate = DateTime.now();
-  });
-  getMenuApi();
   }
 }
 
