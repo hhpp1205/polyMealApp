@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:poly_meal/const/style.dart';
@@ -22,6 +23,8 @@ class _ManuScreenState extends State<ManuScreen> {
   Map<String, String>? schoolCodeMap = {"001": "대전폴리텍", "002": "서울정수폴리택"};
   String? schoolCode;
 
+  bool loading = false;
+
   late Map<String, dynamic> queryParams = {
     'schoolCode': schoolCode,
     'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
@@ -38,10 +41,15 @@ class _ManuScreenState extends State<ManuScreen> {
   }
 
   Future<void> getMenuApi() async {
+    setState(() {
+      loading = true;
+    });
+
     final url = Uri.parse("${HOST}/api/v1/menus")
         .replace(queryParameters: makeQueryParams());
     var result = await http.get(url);
     setState(() {
+      loading = false;
       try {
         menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
       } catch (e) {
@@ -147,6 +155,7 @@ class _ManuScreenState extends State<ManuScreen> {
                   .map((x) => _MenuBox(
                         mealTimeIndex: x.key,
                         menu: x.value,
+                        loading: loading,
                       ))
                   .toList(),
             ),
@@ -318,12 +327,12 @@ class _DateBar extends StatelessWidget {
                         onPressed: onPressedTodayButton,
                         child: Text(
                           "Today",
-                          style: TEXT_STYLE.copyWith(color: COLOR_GREEN),
+                          style: TEXT_STYLE.copyWith(color: COLOR_ORANGE),
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: COLOR_WHITE,
                           side: BorderSide(
-                            color: COLOR_GREEN,
+                            color: COLOR_ORANGE,
                             width: 2.5,
                           ),
                           shape: RoundedRectangleBorder(
@@ -352,14 +361,19 @@ class _DateBar extends StatelessWidget {
 class _MenuBox extends StatelessWidget {
   final int mealTimeIndex;
   final String menu;
+  final bool loading;
 
   const _MenuBox({
     required this.mealTimeIndex,
     required this.menu,
+    required this.loading,
     super.key,
   });
 
   String menuSplit(String menu) {
+    if(menu.indexOf(",") == - 1) {
+      return menu;
+    }
     List<String> splitMenu = menu.split(", ");
 
     String resultMenu = "";
@@ -382,7 +396,7 @@ class _MenuBox extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.225,
         decoration: BoxDecoration(
           color: COLOR_WHITE,
@@ -400,7 +414,7 @@ class _MenuBox extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.03,
                     decoration: BoxDecoration(
-                      color: COLOR_NAVY,
+                      color: COLOR_ORANGE,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Align(
@@ -412,6 +426,11 @@ class _MenuBox extends StatelessWidget {
                     ),
                   ),
                 ),
+                if(loading) CupertinoActivityIndicator(
+                    color: COLOR_ORANGE,
+                    radius: 20.0,
+                ),
+                if(!loading)
                 Text(
                   menu.isNotEmpty ?? false ? menuSplit(menu!) : "등록된 메뉴가 없습니다.",
                   style: TEXT_STYLE.copyWith(fontSize: 17.0),
