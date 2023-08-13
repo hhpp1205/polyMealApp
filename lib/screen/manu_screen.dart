@@ -20,7 +20,7 @@ class ManuScreen extends StatefulWidget {
 
 class _ManuScreenState extends State<ManuScreen> {
   DateTime? selectedDate;
-  Map<String, String>? schoolCodeMap = {"001": "대전폴리텍", "002": "서울정수폴리택"};
+  Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
 
   bool loading = false;
@@ -35,9 +35,9 @@ class _ManuScreenState extends State<ManuScreen> {
   @override
   void initState() {
     selectedDate = DateTime.now();
+    isSchoolCodeNavigator();
     getMenuApi();
     getSchoolListApi();
-    isSchoolCodeNavigator();
   }
 
   Future<void> getMenuApi() async {
@@ -45,9 +45,14 @@ class _ManuScreenState extends State<ManuScreen> {
       loading = true;
     });
 
+    if(schoolCode == null || schoolCode!.isEmpty) {
+      await getSchoolCodeFromPref();
+    }
+
     final url = Uri.parse("${HOST}/api/v1/menus")
         .replace(queryParameters: makeQueryParams());
     var result = await http.get(url);
+
     setState(() {
       loading = false;
       try {
@@ -97,9 +102,14 @@ class _ManuScreenState extends State<ManuScreen> {
     return queryParams;
   }
 
-  void setSchoolCode(String schoolCode) async {
-    print("call setSchoolCode");
+  getSchoolCodeFromPref() async{
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(()  {
+      schoolCode = pref.getString("schoolCode");
+    });
+  }
 
+  void setSchoolCode(String schoolCode) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("schoolCode", schoolCode);
 
@@ -136,7 +146,6 @@ class _ManuScreenState extends State<ManuScreen> {
         onVerticalDragUpdate: (details) {
           if (details.delta.dy > 110) {
             onPressedTodayButton();
-            print("call VerticalDragUpdate");
           }
         },
         child: Column(
@@ -381,11 +390,9 @@ class _MenuBox extends StatelessWidget {
     for(int i = 0; i < splitMenu.length - 1; i += 2) {
       if(i > splitMenu.length) {
         resultMenu += splitMenu[i - 1];
-        print("${splitMenu[i - 1]}");
         continue;
       }
       resultMenu += "${splitMenu[i]}, ${splitMenu[i+1]} \n";
-      print("${splitMenu[i]}, ${splitMenu[i+1]}");
     }
 
     return resultMenu;

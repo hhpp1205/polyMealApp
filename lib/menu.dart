@@ -8,7 +8,6 @@ class Menu {
   Menu(this.schoolName, this.date, this.meal);
 
   static Menu of(Map<String, dynamic> json) {
-    print("Menu call constructor");
     return Menu(
         json['schoolName'],
         json['date'],
