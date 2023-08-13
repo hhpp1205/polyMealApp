@@ -105,14 +105,16 @@ class _ManuScreenState extends State<ManuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: COLOR_IVORY,
+      backgroundColor: COLOR_GRAY,
       appBar: AppBar(
-        backgroundColor: COLOR_NAVY,
+        foregroundColor: COLOR_BLACK,
+        backgroundColor: COLOR_GRAY,
+        elevation: 0.0,
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
             menu.schoolName,
-            style: TextStyle(color: COLOR_IVORY, fontWeight: FontWeight.w700),
+            style: TextStyle(color: COLOR_BLACK, fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -148,24 +150,24 @@ class _ManuScreenState extends State<ManuScreen> {
                       ))
                   .toList(),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                print("menu = ${menu}");
-                print(queryParams);
-                // print(schoolCodeMap);
-
-                SharedPreferences pref = await SharedPreferences.getInstance();
-                print(pref.getString("schoolCode"));
-              },
-              child: Text('button'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                SharedPreferences pref = await SharedPreferences.getInstance();
-                pref.remove("schoolCode");
-              },
-              child: Text('button'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     print("menu = ${menu}");
+            //     print(queryParams);
+            //     // print(schoolCodeMap);
+            //
+            //     SharedPreferences pref = await SharedPreferences.getInstance();
+            //     print(pref.getString("schoolCode"));
+            //   },
+            //   child: Text('button'),
+            // ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     SharedPreferences pref = await SharedPreferences.getInstance();
+            //     pref.remove("schoolCode");
+            //   },
+            //   child: Text('button'),
+            // ),
           ],
         ),
       ),
@@ -220,7 +222,7 @@ class _Drawer extends StatelessWidget {
             ),
             accountEmail: Text(''),
             decoration: BoxDecoration(
-              color: COLOR_NAVY,
+              color: COLOR_GRAY,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10.0),
                 bottomRight: Radius.circular(10.0),
@@ -231,10 +233,10 @@ class _Drawer extends StatelessWidget {
             leading: Icon(
               Icons.school,
             ),
-            iconColor: COLOR_NAVY,
+            iconColor: COLOR_BLACK,
             title: Text(
               "학교 변경",
-              style: TextStyle(color: COLOR_NAVY, fontWeight: FontWeight.w700),
+              style: TextStyle(color: COLOR_BLACK, fontWeight: FontWeight.w700),
             ),
             onTap: () async {
               //Drawer 메뉴 닫기
@@ -245,7 +247,6 @@ class _Drawer extends StatelessWidget {
                             schoolCodeMap: schoolCodeMap,
                           )));
               setSchoolCode(schoolCode);
-              print(schoolCode);
             },
           )
         ],
@@ -287,7 +288,7 @@ class _DateBar extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.05,
         decoration: BoxDecoration(
-          color: COLOR_NAVY,
+          color: COLOR_GRAY,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -295,7 +296,7 @@ class _DateBar extends StatelessWidget {
             IconButton(
               onPressed: onPressedBackDateButton,
               iconSize: 25.0,
-              color: Colors.white,
+              color: COLOR_BLACK,
               icon: Icon(Icons.arrow_back_ios),
             ),
             Expanded(
@@ -317,12 +318,12 @@ class _DateBar extends StatelessWidget {
                         onPressed: onPressedTodayButton,
                         child: Text(
                           "Today",
-                          style: TEXT_STYLE,
+                          style: TEXT_STYLE.copyWith(color: COLOR_GREEN),
                         ),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: COLOR_IVORY,
+                          foregroundColor: COLOR_WHITE,
                           side: BorderSide(
-                            color: COLOR_IVORY,
+                            color: COLOR_GREEN,
                             width: 2.5,
                           ),
                           shape: RoundedRectangleBorder(
@@ -338,7 +339,7 @@ class _DateBar extends StatelessWidget {
             IconButton(
               onPressed: onPressedForwardButton,
               iconSize: 25.0,
-              color: COLOR_IVORY,
+              color: COLOR_BLACK,
               icon: Icon(Icons.arrow_forward_ios),
             ),
           ],
@@ -358,15 +359,33 @@ class _MenuBox extends StatelessWidget {
     super.key,
   });
 
+  String menuSplit(String menu) {
+    List<String> splitMenu = menu.split(", ");
+
+    String resultMenu = "";
+
+    for(int i = 0; i < splitMenu.length - 1; i += 2) {
+      if(i > splitMenu.length) {
+        resultMenu += splitMenu[i - 1];
+        print("${splitMenu[i - 1]}");
+        continue;
+      }
+      resultMenu += "${splitMenu[i]}, ${splitMenu[i+1]} \n";
+      print("${splitMenu[i]}, ${splitMenu[i+1]}");
+    }
+
+    return resultMenu;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.20,
+        height: MediaQuery.of(context).size.height * 0.225,
         decoration: BoxDecoration(
-          color: COLOR_NAVY,
+          color: COLOR_WHITE,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Align(
@@ -376,26 +395,26 @@ class _MenuBox extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 30.0),
+                  padding: const EdgeInsets.only(bottom: 10.0),
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.03,
                     decoration: BoxDecoration(
-                      color: COLOR_IVORY,
+                      color: COLOR_NAVY,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
                         MEAL_TIME[mealTimeIndex],
-                        style: TEXT_STYLE.copyWith(color: COLOR_NAVY),
+                        style: TEXT_STYLE.copyWith(color: COLOR_WHITE),
                       ),
                     ),
                   ),
                 ),
                 Text(
-                  menu.isNotEmpty ?? false ? menu! : "등록된 메뉴가 없습니다.",
-                  style: TEXT_STYLE.copyWith(fontSize: 18.0),
+                  menu.isNotEmpty ?? false ? menuSplit(menu!) : "등록된 메뉴가 없습니다.",
+                  style: TEXT_STYLE.copyWith(fontSize: 17.0),
                 ),
               ],
             ),

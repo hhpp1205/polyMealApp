@@ -13,14 +13,16 @@ class SelectSchoolScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: COLOR_IVORY,
+      backgroundColor: COLOR_GRAY,
       appBar: AppBar(
-        backgroundColor: COLOR_NAVY,
+        foregroundColor: COLOR_BLACK,
+        backgroundColor: COLOR_GRAY,
+        elevation: 0.0,
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
             "학교를 선택해 주세요",
-            style: TextStyle(color: COLOR_IVORY, fontWeight: FontWeight.w700),
+            style: TextStyle(color: COLOR_BLACK, fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -34,7 +36,7 @@ class SelectSchoolScreen extends StatelessWidget {
              },
              child: Text(
                "${entry.value}",
-               style: TEXT_STYLE.copyWith(color: COLOR_NAVY),
+               style: TEXT_STYLE,
              ),
            ))
                .toList(),
