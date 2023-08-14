@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:poly_meal/const/pref.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
 import 'package:poly_meal/const/mealTime.dart';
@@ -81,9 +82,9 @@ class _ManuScreenState extends State<ManuScreen> {
 
   isSchoolCodeNavigator() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if(pref.getString("schoolCode") != null) {
+    if(pref.getString(SCHOOLCODE) != null) {
       setState(() {
-        schoolCode = pref.getString("schoolCode").toString();
+        schoolCode = pref.getString(SCHOOLCODE).toString();
       });
     } else {
       final schoolCode = await Navigator.of(context).push(
@@ -105,13 +106,13 @@ class _ManuScreenState extends State<ManuScreen> {
   getSchoolCodeFromPref() async{
     final SharedPreferences pref = await SharedPreferences.getInstance();
     setState(()  {
-      schoolCode = pref.getString("schoolCode");
+      schoolCode = pref.getString(SCHOOLCODE);
     });
   }
 
   void setSchoolCode(String schoolCode) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString("schoolCode", schoolCode);
+    pref.setString(SCHOOLCODE, schoolCode);
 
     setState(() {
       this.schoolCode = schoolCode;
@@ -175,14 +176,14 @@ class _ManuScreenState extends State<ManuScreen> {
             //     // print(schoolCodeMap);
             //
             //     SharedPreferences pref = await SharedPreferences.getInstance();
-            //     print(pref.getString("schoolCode"));
+            //     print(pref.getString(SCHOOLCODE));
             //   },
             //   child: Text('button'),
             // ),
             // ElevatedButton(
             //   onPressed: () async {
             //     SharedPreferences pref = await SharedPreferences.getInstance();
-            //     pref.remove("schoolCode");
+            //     pref.remove(SCHOOLCODE);
             //   },
             //   child: Text('button'),
             // ),

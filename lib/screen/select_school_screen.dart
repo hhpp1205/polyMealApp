@@ -32,11 +32,11 @@ class SelectSchoolScreen extends StatelessWidget {
            children: schoolCodeMap.entries
                .map((entry) => TextButton(
              onPressed: () {
-               Navigator.of(context).pop(entry.key);
+               Navigator.of(context).pop(entry.value);
              },
              child: Text(
-               "${entry.value}",
-               style: TEXT_STYLE,
+               "${entry.key}",
+               style: TEXT_STYLE.copyWith(fontSize: 15.5),
              ),
            ))
                .toList(),
