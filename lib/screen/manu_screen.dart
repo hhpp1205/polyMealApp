@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poly_meal/const/pref.dart';
+import 'package:poly_meal/const/pref_key.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
 import 'package:poly_meal/const/mealTime.dart';
@@ -26,12 +26,7 @@ class _ManuScreenState extends State<ManuScreen> {
 
   bool loading = false;
 
-  late Map<String, dynamic> queryParams = {
-    'schoolCode': schoolCode,
-    'date': DateFormat('yyyy-MM-dd').format(selectedDate!)
-  };
-
-  Menu menu = Menu("학교를 선택해 주세요", "", List.of(["", "", ""]));
+  Menu menu = Menu("학교를 선택해 주세요", "", "", List.of(["", "", ""]));
 
   @override
   void initState() {
@@ -165,28 +160,11 @@ class _ManuScreenState extends State<ManuScreen> {
                   .map((x) => _MenuBox(
                         mealTimeIndex: x.key,
                         menu: x.value,
+                        schoolCode: schoolCode ?? "",
                         loading: loading,
                       ))
                   .toList(),
             ),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     print("menu = ${menu}");
-            //     print(queryParams);
-            //     // print(schoolCodeMap);
-            //
-            //     SharedPreferences pref = await SharedPreferences.getInstance();
-            //     print(pref.getString(SCHOOLCODE));
-            //   },
-            //   child: Text('button'),
-            // ),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     SharedPreferences pref = await SharedPreferences.getInstance();
-            //     pref.remove(SCHOOLCODE);
-            //   },
-            //   child: Text('button'),
-            // ),
           ],
         ),
       ),
@@ -371,16 +349,22 @@ class _DateBar extends StatelessWidget {
 class _MenuBox extends StatelessWidget {
   final int mealTimeIndex;
   final String menu;
+  final String schoolCode;
   final bool loading;
 
   const _MenuBox({
     required this.mealTimeIndex,
     required this.menu,
+    required this.schoolCode,
     required this.loading,
     super.key,
   });
 
   String menuSplit(String menu) {
+    if(schoolCode == "010") {
+      return menu;
+    }
+
     if(menu.indexOf(",") == - 1) {
       return menu;
     }
@@ -405,7 +389,7 @@ class _MenuBox extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.225,
+        height: MediaQuery.of(context).size.height * 0.215,
         decoration: BoxDecoration(
           color: COLOR_WHITE,
           borderRadius: BorderRadius.circular(20),
@@ -439,9 +423,11 @@ class _MenuBox extends StatelessWidget {
                     radius: 20.0,
                 ),
                 if(!loading)
-                Text(
-                  menu.isNotEmpty ?? false ? menuSplit(menu!) : "등록된 메뉴가 없습니다.",
-                  style: TEXT_STYLE.copyWith(fontSize: 17.0),
+                SingleChildScrollView(
+                  child: Text(
+                    menu.isNotEmpty ?? false ? menuSplit(menu!) : "등록된 메뉴가 없습니다.",
+                    style: TEXT_STYLE.copyWith(fontSize: 17.0),
+                  ),
                 ),
               ],
             ),
