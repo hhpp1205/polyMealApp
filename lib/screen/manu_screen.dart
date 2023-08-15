@@ -24,24 +24,24 @@ class _ManuScreenState extends State<ManuScreen> {
   Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
 
-  bool loading = false;
+  bool menuLoading = false;
+  bool schoolCodeLoading = false;
 
-  Menu menu = Menu("학교를 선택해 주세요", "", "", List.of(["", "", ""]));
+  Menu menu = Menu.ofEmptyMenu();
 
   @override
   void initState() {
     selectedDate = DateTime.now();
-    isSchoolCodeNavigator();
-    getMenuApi();
     getSchoolListApi();
+    getMenuApi();
   }
 
   Future<void> getMenuApi() async {
     setState(() {
-      loading = true;
+      menuLoading = true;
     });
 
-    if(schoolCode == null || schoolCode!.isEmpty) {
+    if (schoolCode == null || schoolCode!.isEmpty) {
       await getSchoolCodeFromPref();
     }
 
@@ -50,16 +50,19 @@ class _ManuScreenState extends State<ManuScreen> {
     var result = await http.get(url);
 
     setState(() {
-      loading = false;
+      menuLoading = false;
       try {
         menu = Menu.of(jsonDecode(utf8.decode(result.bodyBytes)));
       } catch (e) {
-        menu.meal = List.of(["", "", ""]);
+        print(e);
       }
     });
   }
 
   Future<void> getSchoolListApi() async {
+    setState(() {
+      schoolCodeLoading = true;
+    });
     final url = Uri.parse("${HOST}/api/v1/schools");
     var result = await http.get(url);
 
@@ -71,20 +74,25 @@ class _ManuScreenState extends State<ManuScreen> {
     });
 
     setState(() {
+      schoolCodeLoading = false;
       this.schoolCodeMap = schoolCodeMap;
     });
+
+    isSchoolCodeNavigator();
   }
 
   isSchoolCodeNavigator() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if(pref.getString(SCHOOLCODE) != null) {
+    if (pref.getString(SCHOOLCODE) != null) {
       setState(() {
         schoolCode = pref.getString(SCHOOLCODE).toString();
       });
     } else {
-      final schoolCode = await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => SelectSchoolScreen(schoolCodeMap: schoolCodeMap!))
-      );
+      final schoolCode = await Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => SelectSchoolScreen(
+                schoolCodeMap: schoolCodeMap!,
+                schoolCodeLoading: schoolCodeLoading,
+              )));
 
       setSchoolCode(schoolCode);
     }
@@ -98,9 +106,9 @@ class _ManuScreenState extends State<ManuScreen> {
     return queryParams;
   }
 
-  getSchoolCodeFromPref() async{
+  getSchoolCodeFromPref() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(()  {
+    setState(() {
       schoolCode = pref.getString(SCHOOLCODE);
     });
   }
@@ -136,6 +144,7 @@ class _ManuScreenState extends State<ManuScreen> {
         schoolName: menu.schoolName,
         schoolCodeMap: schoolCodeMap!,
         setSchoolCode: setSchoolCode,
+        schoolCodeLoading: schoolCodeLoading,
       ),
       body: GestureDetector(
         // 위에서 아래로 드래그 시 오늘 날짜로 업데이트
@@ -161,7 +170,7 @@ class _ManuScreenState extends State<ManuScreen> {
                         mealTimeIndex: x.key,
                         menu: x.value,
                         schoolCode: schoolCode ?? "",
-                        loading: loading,
+                        menuLoading: menuLoading,
                       ))
                   .toList(),
             ),
@@ -170,7 +179,6 @@ class _ManuScreenState extends State<ManuScreen> {
       ),
     );
   }
-
 
   void onPressedBackDateButton() {
     setState(() {
@@ -200,11 +208,13 @@ class _Drawer extends StatelessWidget {
   final String schoolName;
   final Map<String, String> schoolCodeMap;
   final setSchoolCode;
+  final bool schoolCodeLoading;
 
   const _Drawer(
       {required this.schoolName,
       required this.schoolCodeMap,
       required this.setSchoolCode,
+      required this.schoolCodeLoading,
       super.key});
 
   @override
@@ -242,6 +252,7 @@ class _Drawer extends StatelessWidget {
                   await Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => SelectSchoolScreen(
                             schoolCodeMap: schoolCodeMap,
+                            schoolCodeLoading: schoolCodeLoading,
                           )));
               setSchoolCode(schoolCode);
             },
@@ -350,34 +361,34 @@ class _MenuBox extends StatelessWidget {
   final int mealTimeIndex;
   final String menu;
   final String schoolCode;
-  final bool loading;
+  final bool menuLoading;
 
   const _MenuBox({
     required this.mealTimeIndex,
     required this.menu,
     required this.schoolCode,
-    required this.loading,
+    required this.menuLoading,
     super.key,
   });
 
   String menuSplit(String menu) {
-    if(schoolCode == "010") {
+    if (schoolCode == "010") {
       return menu;
     }
 
-    if(menu.indexOf(",") == - 1) {
+    if (menu.indexOf(",") == -1) {
       return menu;
     }
     List<String> splitMenu = menu.split(", ");
 
     String resultMenu = "";
 
-    for(int i = 0; i < splitMenu.length - 1; i += 2) {
-      if(i > splitMenu.length) {
+    for (int i = 0; i < splitMenu.length - 1; i += 2) {
+      if (i > splitMenu.length) {
         resultMenu += splitMenu[i - 1];
         continue;
       }
-      resultMenu += "${splitMenu[i]}, ${splitMenu[i+1]} \n";
+      resultMenu += "${splitMenu[i]}, ${splitMenu[i + 1]} \n";
     }
 
     return resultMenu;
@@ -389,7 +400,7 @@ class _MenuBox extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.215,
+        height: MediaQuery.of(context).size.height * 0.235,
         decoration: BoxDecoration(
           color: COLOR_WHITE,
           borderRadius: BorderRadius.circular(20),
@@ -418,17 +429,22 @@ class _MenuBox extends StatelessWidget {
                     ),
                   ),
                 ),
-                if(loading) CupertinoActivityIndicator(
+                if (menuLoading)
+                  CupertinoActivityIndicator(
                     color: COLOR_ORANGE,
                     radius: 20.0,
-                ),
-                if(!loading)
-                SingleChildScrollView(
-                  child: Text(
-                    menu.isNotEmpty ?? false ? menuSplit(menu!) : "등록된 메뉴가 없습니다.",
-                    style: TEXT_STYLE.copyWith(fontSize: 17.0),
                   ),
-                ),
+                if (!menuLoading)
+                  SingleChildScrollView(
+                    child: Text(
+                      menu.isNotEmpty ?? false
+                          ? menuSplit(menu!)
+                          : "등록된 메뉴가 없습니다.",
+                      style: TEXT_STYLE.copyWith(
+                        fontSize: MediaQuery.of(context).size.height * 0.0195,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

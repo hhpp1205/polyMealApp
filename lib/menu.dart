@@ -15,7 +15,15 @@ class Menu {
         json['date'],
         List<String>.from(json['meal'])
     );
+  }
 
+  static Menu ofEmptyMenu() {
+    return Menu(
+        "",
+        "학교를 선택해 주세요",
+        "",
+        List.of(["", "", ""])
+    );
   }
 
   @override

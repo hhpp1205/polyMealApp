@@ -17,6 +17,7 @@ const Map<int, String> WEEKDAY_MAP = {
 void main() {
   return runApp(
       MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: ManuScreen(),
     ),
   );
