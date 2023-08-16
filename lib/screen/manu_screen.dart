@@ -26,6 +26,7 @@ class _ManuScreenState extends State<ManuScreen> {
 
   bool menuLoading = false;
   bool schoolCodeLoading = false;
+  bool isDragEnable = false;
 
   Menu menu = Menu.ofEmptyMenu();
 
@@ -124,6 +125,40 @@ class _ManuScreenState extends State<ManuScreen> {
     getMenuApi();
   }
 
+  void onHorizontalDragEndDate(DragEndDetails details) {
+    if(isDragEnable) return;
+
+    setState(() {
+      isDragEnable = true;
+    });
+
+    if (details.velocity.pixelsPerSecond.dx > 0) {
+      onPressedBackDateButton();
+    } else if(details.velocity.pixelsPerSecond.dx < 0) {
+      onPressedForwardButton();
+    }
+
+    setState(() {
+      isDragEnable = false;
+    });
+  }
+
+  void onVerticalDragEndDate(DragEndDetails details) {
+    if(isDragEnable) return;
+
+    setState(() {
+      isDragEnable = true;
+    });
+
+    if(details.velocity.pixelsPerSecond.dy > 0) {
+      onPressedTodayButton();
+    }
+
+    setState(() {
+      isDragEnable = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,12 +182,9 @@ class _ManuScreenState extends State<ManuScreen> {
         schoolCodeLoading: schoolCodeLoading,
       ),
       body: GestureDetector(
-        // 위에서 아래로 드래그 시 오늘 날짜로 업데이트
-        onVerticalDragUpdate: (details) {
-          if (details.delta.dy > 110) {
-            onPressedTodayButton();
-          }
-        },
+        onVerticalDragEnd: onVerticalDragEndDate,
+        // 좌/우 스크롤 시 날짜 변경
+        onHorizontalDragEnd: onHorizontalDragEndDate,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -424,7 +456,10 @@ class _MenuBox extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         MEAL_TIME[mealTimeIndex],
-                        style: TEXT_STYLE.copyWith(color: COLOR_WHITE),
+                        style: TEXT_STYLE.copyWith(
+                          color: COLOR_WHITE,
+                          fontSize: MediaQuery.of(context).size.height * 0.0195,
+                        ),
                       ),
                     ),
                   ),
