@@ -12,14 +12,14 @@ import 'package:poly_meal/menu.dart';
 import 'package:poly_meal/screen/select_school_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ManuScreen extends StatefulWidget {
-  const ManuScreen({super.key});
+class MenuScreen extends StatefulWidget {
+  const MenuScreen({super.key});
 
   @override
-  State<ManuScreen> createState() => _ManuScreenState();
+  State<MenuScreen> createState() => _MenuScreenState();
 }
 
-class _ManuScreenState extends State<ManuScreen> {
+class _MenuScreenState extends State<MenuScreen> {
   DateTime? selectedDate;
   Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
@@ -32,6 +32,7 @@ class _ManuScreenState extends State<ManuScreen> {
 
   @override
   void initState() {
+    super.initState();
     selectedDate = DateTime.now();
     getSchoolListApi();
     getMenuApi();
@@ -126,7 +127,7 @@ class _ManuScreenState extends State<ManuScreen> {
   }
 
   void onHorizontalDragEndDate(DragEndDetails details) {
-    if(isDragEnable) return;
+    if (isDragEnable) return;
 
     setState(() {
       isDragEnable = true;
@@ -134,7 +135,7 @@ class _ManuScreenState extends State<ManuScreen> {
 
     if (details.velocity.pixelsPerSecond.dx > 0) {
       onPressedBackDateButton();
-    } else if(details.velocity.pixelsPerSecond.dx < 0) {
+    } else if (details.velocity.pixelsPerSecond.dx < 0) {
       onPressedForwardButton();
     }
 
@@ -144,13 +145,13 @@ class _ManuScreenState extends State<ManuScreen> {
   }
 
   void onVerticalDragEndDate(DragEndDetails details) {
-    if(isDragEnable) return;
+    if (isDragEnable) return;
 
     setState(() {
       isDragEnable = true;
     });
 
-    if(details.velocity.pixelsPerSecond.dy > 0) {
+    if (details.velocity.pixelsPerSecond.dy > 0) {
       onPressedTodayButton();
     }
 
@@ -288,7 +289,7 @@ class _Drawer extends StatelessWidget {
                           )));
               setSchoolCode(schoolCode);
             },
-          )
+          ),
         ],
       ),
     );

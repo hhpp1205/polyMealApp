@@ -1,7 +1,9 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:poly_meal/screen/manu_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:poly_meal/screen/menu_screen.dart';
+import 'package:poly_meal/screen/splashScreen.dart';
 
 
 const Map<int, String> WEEKDAY_MAP = {
@@ -14,11 +16,12 @@ const Map<int, String> WEEKDAY_MAP = {
 7: '일',
 };
 
-void main() {
+void main()  {
   return runApp(
       MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: ManuScreen(),
+        // home: MenuScreen(),
+        home: SplashScreen(),
     ),
   );
 }
