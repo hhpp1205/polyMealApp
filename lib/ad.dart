@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Ad {
-  final String androidTest = "ca-app-pub-7474014519138308~5468220261";
+  final String androidTest = "ca-app-pub-7474014519138308/1918576239";
   final String iosTest = "ca-app-pub-7474014519138308~9231634637";
 
   InterstitialAd? interstitialAd;
