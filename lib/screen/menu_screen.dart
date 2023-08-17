@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:poly_meal/ad.dart';
 import 'package:poly_meal/const/pref_key.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
@@ -23,6 +24,7 @@ class _MenuScreenState extends State<MenuScreen> {
   DateTime? selectedDate;
   Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
+  Ad ad = new Ad();
 
   bool menuLoading = false;
   bool schoolCodeLoading = false;
@@ -33,9 +35,17 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
+    ad.createInterstitialAd();
     selectedDate = DateTime.now();
     getSchoolListApi();
     getMenuApi();
+  }
+
+
+  @override
+  void dispose() {
+    ad.interstitialAd?.dispose();
+    super.dispose();
   }
 
   Future<void> getMenuApi() async {
