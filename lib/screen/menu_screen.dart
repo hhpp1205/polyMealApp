@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:poly_meal/ad.dart';
+import 'package:poly_meal/ad_helper.dart';
 import 'package:poly_meal/const/pref_key.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:poly_meal/menu.dart';
 import 'package:poly_meal/screen/select_school_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -24,7 +25,6 @@ class _MenuScreenState extends State<MenuScreen> {
   DateTime? selectedDate;
   Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
-  Ad ad = new Ad();
 
   bool menuLoading = false;
   bool schoolCodeLoading = false;
@@ -32,20 +32,46 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Menu menu = Menu.ofEmptyMenu();
 
+  InterstitialAd? _interstitialAd;
+
   @override
   void initState() {
     super.initState();
-    ad.createInterstitialAd();
+    _initGoogleMobileAds();
+    _loadInterstitialAd();
     selectedDate = DateTime.now();
     getSchoolListApi();
     getMenuApi();
   }
 
-
   @override
   void dispose() {
-    ad.interstitialAd?.dispose();
     super.dispose();
+  }
+
+  Future<InitializationStatus> _initGoogleMobileAds() {
+    return MobileAds.instance.initialize();
+  }
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdDismissedFullScreenContent: (ad) {
+                print("call onAdDismissedFullScreenContent");
+              },
+            );
+            setState(() {
+              _interstitialAd = ad;
+            });
+          },
+          onAdFailedToLoad: (err) {
+            print("Failed to load an interstitial ad: ${err.message}");
+          },
+        ));
   }
 
   Future<void> getMenuApi() async {
