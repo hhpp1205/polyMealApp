@@ -42,7 +42,7 @@ class SelectSchoolScreen extends StatelessWidget {
                   },
                   child: Text(
                     "${entry.key}",
-                    style: TEXT_STYLE.copyWith(fontSize: 15.5),
+                    style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0195),
                   ),
                 ))
                     .toList(),

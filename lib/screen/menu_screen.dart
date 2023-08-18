@@ -171,7 +171,7 @@ class _MenuScreenState extends State<MenuScreen> {
           alignment: Alignment.centerRight,
           child: Text(
             menu.schoolName,
-            style: TextStyle(color: COLOR_BLACK, fontWeight: FontWeight.w700),
+            style: TextStyle(color: COLOR_BLACK, fontWeight: FontWeight.w700, fontSize: MediaQuery.of(context).size.height * 0.0195),
           ),
         ),
       ),
@@ -257,7 +257,7 @@ class _Drawer extends StatelessWidget {
           UserAccountsDrawerHeader(
             accountName: Text(
               schoolName,
-              style: TEXT_STYLE,
+              style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.013),
             ),
             accountEmail: Text(''),
             decoration: BoxDecoration(
@@ -335,7 +335,7 @@ class _DateBar extends StatelessWidget {
           children: [
             IconButton(
               onPressed: onPressedBackDateButton,
-              iconSize: 25.0,
+              iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_back_ios),
             ),
@@ -347,18 +347,19 @@ class _DateBar extends StatelessWidget {
                   children: [
                     Text(
                       '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
-                      style: TEXT_STYLE,
+                      style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
                     ),
                     SizedBox(
                       width: 10.0,
                     ),
                     SizedBox(
-                      width: 80.0,
+                      width: MediaQuery.of(context).size.height * 0.105,
+                      height: MediaQuery.of(context).size.height * 0.04,
                       child: OutlinedButton(
                         onPressed: onPressedTodayButton,
                         child: Text(
                           "Today",
-                          style: TEXT_STYLE.copyWith(color: COLOR_ORANGE),
+                          style: TEXT_STYLE.copyWith(color: COLOR_ORANGE, fontSize: MediaQuery.of(context).size.height * 0.0185),
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: COLOR_WHITE,
@@ -378,7 +379,7 @@ class _DateBar extends StatelessWidget {
             ),
             IconButton(
               onPressed: onPressedForwardButton,
-              iconSize: 25.0,
+              iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_forward_ios),
             ),
