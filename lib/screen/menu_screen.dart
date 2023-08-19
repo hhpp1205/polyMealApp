@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:poly_meal/component/date_bar.dart';
 import 'package:poly_meal/const/pref_key.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/const/host.dart';
 import 'package:poly_meal/const/mealTime.dart';
-import 'package:poly_meal/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:poly_meal/menu.dart';
 import 'package:poly_meal/screen/select_school_screen.dart';
+import 'package:poly_meal/state/selected_date_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  SelectedDateController selectedDateController = Get.put(SelectedDateController());
+
   DateTime? selectedDate;
   Map<String, String>? schoolCodeMap = {"": ""};
   String? schoolCode;
@@ -188,8 +193,7 @@ class _MenuScreenState extends State<MenuScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _DateBar(
-              selectedDate: selectedDate!,
+            DateBar(
               onPressedBackDateButton: onPressedBackDateButton,
               onPressedForwardButton: onPressedForwardButton,
               onPressedTodayButton: onPressedTodayButton,
@@ -213,26 +217,29 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   void onPressedBackDateButton() {
-    setState(() {
-      selectedDate = DateTime(
-          selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
-    });
-    getMenuApi();
+    // setState(() {
+    //   selectedDate = DateTime(
+    //       selectedDate!.year, selectedDate!.month, selectedDate!.day - 1);
+    // });
+    selectedDateController.decrementSelectedDate();
+    // getMenuApi();
   }
 
   void onPressedForwardButton() {
-    setState(() {
-      selectedDate = DateTime(
-          selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
-    });
-    getMenuApi();
+    // setState(() {
+    //   selectedDate = DateTime(
+    //       selectedDate!.year, selectedDate!.month, selectedDate!.day + 1);
+    // });
+    selectedDateController.increaseSelectedDate();
+    // getMenuApi();
   }
 
   void onPressedTodayButton() {
-    setState(() {
-      selectedDate = DateTime.now();
-    });
-    getMenuApi();
+    // setState(() {
+    //   selectedDate = DateTime.now();
+    // });
+    selectedDateController.updateSelectedDateToToday();
+    // getMenuApi();
   }
 }
 
@@ -295,100 +302,7 @@ class _Drawer extends StatelessWidget {
   }
 }
 
-class _DateBar extends StatelessWidget {
-  final DateTime selectedDate;
-  late int year;
-  late int month;
-  late int day;
-  late int weekday;
 
-  final VoidCallback onPressedBackDateButton;
-  final VoidCallback onPressedForwardButton;
-  final VoidCallback onPressedTodayButton;
-
-  _DateBar({
-    required this.selectedDate,
-    required this.onPressedBackDateButton,
-    required this.onPressedForwardButton,
-    required this.onPressedTodayButton,
-    super.key,
-  }) {
-    year = selectedDate.year;
-    month = selectedDate.month;
-    day = selectedDate.day;
-    weekday = selectedDate.weekday;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 10.0, top: 30.0, left: 10, right: 10),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.05,
-        decoration: BoxDecoration(
-          color: COLOR_GRAY,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: onPressedBackDateButton,
-              iconSize: MediaQuery.of(context).size.height * 0.0185,
-              color: COLOR_BLACK,
-              icon: Icon(Icons.arrow_back_ios),
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$year-$month-$day(${WEEKDAY_MAP[weekday]})',
-                      style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.105,
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      child: OutlinedButton(
-                        onPressed: onPressedTodayButton,
-                        child: Text(
-                          "Today",
-                          style: TEXT_STYLE.copyWith(color: COLOR_ORANGE, fontSize: MediaQuery.of(context).size.height * 0.0185),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: COLOR_WHITE,
-                          side: BorderSide(
-                            color: COLOR_ORANGE,
-                            width: 2.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: onPressedForwardButton,
-              iconSize: MediaQuery.of(context).size.height * 0.0185,
-              color: COLOR_BLACK,
-              icon: Icon(Icons.arrow_forward_ios),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _MenuBox extends StatelessWidget {
   final int mealTimeIndex;
