@@ -1,16 +1,14 @@
-# poly_meal
+# 급식폴리스(Flutter)
+한국폴리텍 대학의 급식 정보 제공 앱
 
-A new Flutter project.
+# ICON
+![급식폴리스(512 × 512px)](https://github.com/hhpp1205/polyMealApp/assets/59078557/9730db5b-cc3c-4c8a-8fb7-f773caa100de)
 
-## Getting Started
+# UI
+<img width="450" alt="스크린샷 2023-08-20 오후 10 10 02" src="https://github.com/hhpp1205/polyMealApp/assets/59078557/295c3a5b-9229-488b-9d92-6cf25111707f">
 
-This project is a starting point for a Flutter application.
+# Stack
+* Dart : 3.1.0
+* Flutter : 3.13.0
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
