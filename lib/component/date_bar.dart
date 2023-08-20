@@ -52,7 +52,7 @@ class DateBar extends StatelessWidget {
                       width: MediaQuery.of(context).size.height * 0.105,
                       height: MediaQuery.of(context).size.height * 0.04,
                       child: OutlinedButton(
-                        onPressed: controller.selectedDateController.updateSelectedDateToToday,
+                        onPressed: controller.onPressedBackDateButton,
                         child: Text(
                           "Today",
                           style: TEXT_STYLE.copyWith(color: COLOR_ORANGE, fontSize: MediaQuery.of(context).size.height * 0.0185),
@@ -74,7 +74,7 @@ class DateBar extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: controller.selectedDateController.increaseSelectedDate,
+              onPressed: controller.onPressedForwardDateButton,
               iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_forward_ios),

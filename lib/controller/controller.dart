@@ -58,4 +58,14 @@ class Controller extends GetxController {
     getIsDragEnable().value = false;
   }
 
+  void onPressedBackDateButton() {
+    selectedDateController.decrementSelectedDate();
+    schoolMenuController.getMenuApi(getSchoolCode().value, getSelectedDate().value);
+  }
+
+  void onPressedForwardDateButton() {
+    selectedDateController.increaseSelectedDate();
+    schoolMenuController.getMenuApi(getSchoolCode().value, getSelectedDate().value);
+  }
+
 }
