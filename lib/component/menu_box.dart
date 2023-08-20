@@ -81,16 +81,14 @@ class MenuBox extends StatelessWidget {
                         radius: 20.0,
                       );
                     }else {
-                      return SingleChildScrollView(
-                        child: Obx(() => Text(
+                      return Obx(() => Text(
                           controller.schoolMenuController.isMealEmpty()
                               ? "등록된 메뉴가 없습니다."
                               : menuSplit(controller.getMenu().value.meal[mealTimeIndex]),
                           style: TEXT_STYLE.copyWith(
-                            fontSize: MediaQuery.of(context).size.height * 0.0195,
+                            fontSize: MediaQuery.of(context).size.height * 0.018,
                           ),
-                        )),
-                      );
+                        ));
                     }
                   }),
               ],
