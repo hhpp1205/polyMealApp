@@ -3,21 +3,12 @@ import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/const/style.dart';
-import 'package:poly_meal/state/selected_date_controller.dart';
+import 'package:poly_meal/controller/controller.dart';
 
 class DateBar extends StatelessWidget {
-  final SelectedDateController selectedDateController = Get.put(SelectedDateController());
+  final Controller controller = Get.find<Controller>();
 
-  final VoidCallback onPressedBackDateButton;
-  final VoidCallback onPressedForwardButton;
-  final VoidCallback onPressedTodayButton;
-
-  DateBar({
-    required this.onPressedBackDateButton,
-    required this.onPressedForwardButton,
-    required this.onPressedTodayButton,
-    super.key,
-  })
+  DateBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +25,7 @@ class DateBar extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: selectedDateController.decrementSelectedDate,
+              onPressed: controller.selectedDateController.decrementSelectedDate,
               iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_back_ios),
@@ -47,7 +38,10 @@ class DateBar extends StatelessWidget {
                   children: [
                     Obx(() =>
                       Text(
-                      '${selectedDateController.selectedDate.value.year}-${selectedDateController.selectedDate.value.month}-${selectedDateController.selectedDate.value.day}(${WEEKDAY_MAP[selectedDateController.selectedDate.value.weekday]})',
+                      '${controller.getSelectedDate().value.year}-'
+                          '${controller.getSelectedDate().value.month}-'
+                          '${controller.getSelectedDate().value.day}'
+                          '(${WEEKDAY_MAP[controller.getSelectedDate().value.weekday]})',
                       style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
                       )
                     ),
@@ -58,7 +52,7 @@ class DateBar extends StatelessWidget {
                       width: MediaQuery.of(context).size.height * 0.105,
                       height: MediaQuery.of(context).size.height * 0.04,
                       child: OutlinedButton(
-                        onPressed: selectedDateController.updateSelectedDateToToday,
+                        onPressed: controller.selectedDateController.updateSelectedDateToToday,
                         child: Text(
                           "Today",
                           style: TEXT_STYLE.copyWith(color: COLOR_ORANGE, fontSize: MediaQuery.of(context).size.height * 0.0185),
@@ -80,7 +74,7 @@ class DateBar extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: selectedDateController.increaseSelectedDate,
+              onPressed: controller.selectedDateController.increaseSelectedDate,
               iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_forward_ios),
@@ -90,4 +84,5 @@ class DateBar extends StatelessWidget {
       ),
     );
   }
+
 }
