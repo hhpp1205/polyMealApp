@@ -14,9 +14,6 @@ class SchoolMenuController extends GetxController{
   Future<void> getMenuApi(String schoolCode, DateTime date) async {
     isMenuLoading.value = true;
 
-    // if (schoolCode == null || schoolCode!.isEmpty) {
-    //   await getSchoolCodeFromPref();
-    // }
     String formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
     Map<String, dynamic> queryParam = new Map();

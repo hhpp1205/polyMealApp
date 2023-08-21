@@ -25,7 +25,7 @@ class DateBar extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: controller.selectedDateController.decrementSelectedDate,
+              onPressed: controller.onPressedBackDateButton,
               iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_back_ios),
