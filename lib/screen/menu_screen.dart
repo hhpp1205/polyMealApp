@@ -22,13 +22,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     controller = Get.put(Controller());
-    prefDelete();
     initData();
-  }
-
-  void prefDelete() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.clear();
   }
 
   void initData() async {
