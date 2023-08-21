@@ -41,8 +41,8 @@ dependencies:
   intl: ^0.17.0
   #  데이터 저장
   shared_preferences: ^2.2.0
+  # GetX
   get: ^4.6.4
-
 
 dev_dependencies:
   flutter_test:

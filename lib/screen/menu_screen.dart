@@ -61,6 +61,12 @@ class _MenuScreenState extends State<MenuScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DateBar(),
+            // SizedBox(
+            //   height: 25.0,
+            //   child: Row(
+            //     children: List.of([DateTime.now(), DateTime.now()]).map((date) => DayOfWeekButton(date: date)).toList(),
+            //   )
+            // ),
             Column(
               children: [
                 MenuBox(mealTimeIndex: 0),
