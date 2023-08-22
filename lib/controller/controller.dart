@@ -53,7 +53,6 @@ class Controller extends GetxController {
     } else if(details.velocity.pixelsPerSecond.dx < 0) {
       selectedDateController.increaseSelectedDate();
     }
-    print("selectedDate = ${getSelectedDate()}");
     schoolMenuController.getMenuApi(getSchoolCode().value, getSelectedDate().value);
     getIsDragEnable().value = false;
   }
@@ -65,6 +64,11 @@ class Controller extends GetxController {
 
   void onPressedForwardDateButton() {
     selectedDateController.increaseSelectedDate();
+    schoolMenuController.getMenuApi(getSchoolCode().value, getSelectedDate().value);
+  }
+
+  void onPressedTodayButton() {
+    selectedDateController.updateSelectedDateToToday();
     schoolMenuController.getMenuApi(getSchoolCode().value, getSelectedDate().value);
   }
 

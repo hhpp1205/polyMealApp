@@ -9,3 +9,5 @@ const Map<int, String> WEEKDAY_MAP = {
   6: '토',
   7: '일',
 };
+
+const String EMPTY_MENU = "등록된 메뉴가 없습니다.";

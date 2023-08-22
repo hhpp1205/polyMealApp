@@ -25,7 +25,7 @@ class DateBar extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: controller.selectedDateController.decrementSelectedDate,
+              onPressed: controller.onPressedBackDateButton,
               iconSize: MediaQuery.of(context).size.height * 0.0185,
               color: COLOR_BLACK,
               icon: Icon(Icons.arrow_back_ios),
@@ -37,22 +37,26 @@ class DateBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Obx(() =>
-                      Text(
-                      '${controller.getSelectedDate().value.year}-'
-                          '${controller.getSelectedDate().value.month}-'
-                          '${controller.getSelectedDate().value.day}'
-                          '(${WEEKDAY_MAP[controller.getSelectedDate().value.weekday]})',
-                      style: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
+                      TextButton(
+                        onPressed: (){},
+                        style : TextButton.styleFrom(
+                            foregroundColor: COLOR_BLACK,
+                            textStyle: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
+                        ),
+                        child: Text('${controller.getSelectedDate().value.year}-'
+                                  '${controller.getSelectedDate().value.month}-'
+                                  '${controller.getSelectedDate().value.day}'
+                                  '(${WEEKDAY_MAP[controller.getSelectedDate().value.weekday]})'),
                       )
                     ),
                     SizedBox(
-                      width: 10.0,
+                      width: 0.0,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.height * 0.105,
                       height: MediaQuery.of(context).size.height * 0.04,
                       child: OutlinedButton(
-                        onPressed: controller.onPressedBackDateButton,
+                        onPressed: controller.onPressedTodayButton,
                         child: Text(
                           "Today",
                           style: TEXT_STYLE.copyWith(color: COLOR_ORANGE, fontSize: MediaQuery.of(context).size.height * 0.0185),
@@ -81,6 +85,7 @@ class DateBar extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }

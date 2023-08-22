@@ -3,17 +3,18 @@ import 'package:get/get.dart';
 import 'package:poly_meal/const/mealTime.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/controller/controller.dart';
-import 'package:poly_meal/controller/school_menu_controller.dart';
-import 'package:poly_meal/controller/school_controller.dart';
 
 class MenuBox extends StatelessWidget {
   final Controller controller = Get.find<Controller>();
-
   final int mealTimeIndex;
 
   MenuBox({required this.mealTimeIndex, super.key});
 
   String menuSplit(String menu) {
+    if(menu.isEmpty) {
+      return EMPTY_MENU;
+    }
+
     if (controller.getSchoolCode().value == "010") {
       return menu;
     }
@@ -82,10 +83,8 @@ class MenuBox extends StatelessWidget {
                       );
                     }else {
                       return Obx(() => Text(
-                          controller.schoolMenuController.isMealEmpty()
-                              ? "등록된 메뉴가 없습니다."
-                              : menuSplit(controller.getMenu().value.meal[mealTimeIndex]),
-                          style: TEXT_STYLE.copyWith(
+                            menuSplit(controller.getMenu().value.meal[mealTimeIndex]),
+                            style: TEXT_STYLE.copyWith(
                             fontSize: MediaQuery.of(context).size.height * 0.018,
                           ),
                         ));

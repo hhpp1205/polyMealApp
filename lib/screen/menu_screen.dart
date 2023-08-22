@@ -22,13 +22,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     controller = Get.put(Controller());
-    prefDelete();
     initData();
-  }
-
-  void prefDelete() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.clear();
   }
 
   void initData() async {
@@ -61,6 +55,12 @@ class _MenuScreenState extends State<MenuScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DateBar(),
+            // SizedBox(
+            //   height: 25.0,
+            //   child: Row(
+            //     children: List.of([DateTime.now(), DateTime.now()]).map((date) => DayOfWeekButton(date: date)).toList(),
+            //   )
+            // ),
             Column(
               children: [
                 MenuBox(mealTimeIndex: 0),
