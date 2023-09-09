@@ -8,6 +8,7 @@ import 'package:poly_meal/controller/controller.dart';
 class DateBar extends StatelessWidget {
   final Controller controller = Get.find<Controller>();
 
+
   DateBar({super.key});
 
   @override
@@ -38,7 +39,7 @@ class DateBar extends StatelessWidget {
                   children: [
                     Obx(() =>
                       TextButton(
-                        onPressed: (){},
+                        onPressed: showDatePopup,
                         style : TextButton.styleFrom(
                             foregroundColor: COLOR_BLACK,
                             textStyle: TEXT_STYLE.copyWith(fontSize: MediaQuery.of(context).size.height * 0.0185),
@@ -90,4 +91,34 @@ class DateBar extends StatelessWidget {
     );
   }
 
+  void showDatePopup() {
+    Get.dialog(
+      AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: WEEKDAY_MAP.entries.map((entry) =>
+                SizedBox(
+                  width: 35,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: controller.getSelectedDate().value.weekday == entry.key ? COLOR_ORANGE : COLOR_BLACK,
+                      textStyle: TEXT_STYLE,
+                    ),
+                    child: Text(entry.value),
+                    onPressed: () => closeDatePopup(entry),
+                  ),
+                )
+            ).toList(),
+          )
+      ),
+    );
+  }
+
+  void closeDatePopup(MapEntry<int, String> entry) {
+    Get.back();
+
+    int targetWeekday = entry.key - controller.getSelectedDate().value.weekday;
+    controller.selectedDateController.plusDaySelectedDate(targetWeekday);
+    controller.schoolMenuController.getMenuApi(controller.getSchoolCode().value, controller.getSelectedDate().value);
+  }
 }

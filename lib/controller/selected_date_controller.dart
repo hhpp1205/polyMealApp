@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class SelectedDateController extends GetxController {
@@ -16,6 +15,10 @@ class SelectedDateController extends GetxController {
 
    void updateSelectedDateToToday() {
       selectedDate.value = DateTime.now();
+   }
+
+   void plusDaySelectedDate(int day) {
+      selectedDate.value = selectedDate.value.add(Duration(days: day));
    }
 
 }
