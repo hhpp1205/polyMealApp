@@ -7,7 +7,6 @@ import 'package:poly_meal/component/menu_box.dart';
 import 'package:poly_meal/component/school_drawer.dart';
 import 'package:poly_meal/const/style.dart';
 import 'package:poly_meal/controller/controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -55,12 +54,6 @@ class _MenuScreenState extends State<MenuScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DateBar(),
-            // SizedBox(
-            //   height: 25.0,
-            //   child: Row(
-            //     children: List.of([DateTime.now(), DateTime.now()]).map((date) => DayOfWeekButton(date: date)).toList(),
-            //   )
-            // ),
             Column(
               children: [
                 MenuBox(mealTimeIndex: 0),

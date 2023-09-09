@@ -10,8 +10,7 @@ import 'package:poly_meal/util/mail_sender.dart';
 
 class SchoolDrawer extends StatelessWidget {
   final Controller controller = Get.find<Controller>();
-  final SchoolMenuController schoolMenuController =
-      Get.find<SchoolMenuController>();
+  final SchoolMenuController schoolMenuController = Get.find<SchoolMenuController>();
   final SchoolController schoolController = Get.find<SchoolController>();
   final MailSender mailSender = MailSender();
 
